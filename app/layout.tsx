@@ -29,29 +29,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // --- FIX STARTS HERE ---
-
-  // Define the height of your ad banner + some extra space for a nice margin.
-  // Adjust this value if your ad banner has a different height.
-  const AD_BANNER_HEIGHT_PX = 90;
-  const BOTTOM_MARGIN_PX = 20;
-  const totalPadding = AD_BANNER_HEIGHT_PX + BOTTOM_MARGIN_PX;
-
   return (
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable} antialiased`}>
       <body>
-        {/* The <main> tag wraps your page content. We apply the bottom padding here
-            to ensure content doesn't get hidden behind the fixed ad banner. */}
-        <main style={{ paddingBottom: `${totalPadding}px` }}>
+        <main>
           {children}
+          {/* In-flow site-wide banner below content */}
+          <Ads />
         </main>
-
-        {/* The Ads component is placed outside of <main> so it can be fixed
-            to the bottom of the viewport without being affected by the main content's scroll. */}
-        <Ads />
       </body>
     </html>
   );
-  // --- FIX ENDS HERE ---
 }
-
