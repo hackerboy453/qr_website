@@ -3,53 +3,44 @@
 import { useEffect } from "react"
 
 export default function Ads() {
+  // This hook runs once when the component is added to the page.
+  // Its only job is to add the ad network's script to the page.
   useEffect(() => {
-    // Avoid injecting multiple times
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[data-ads="revenuecpmgate-2b862c55cfa5526f39d41eec496a7dc2"]',
-    )
-    if (existing) return
+    // A unique ID for the script tag to prevent adding it more than once.
+    const scriptId = "adsterra-script";
 
-    const script = document.createElement("script")
-    script.async = true
-    script.dataset.cfasync = "false"
-    script.dataset.ads = "revenuecpmgate-2b862c55cfa5526f39d41eec496a7dc2"
-    // Use the exact embed URL pattern (protocol-relative)
-    script.src = "//pl27699682.revenuecpmgate.com/2b862c55cfa5526f39d41eec496a7dc2/invoke.js"
-    document.body.appendChild(script)
-
-    const BOTTOM_HEIGHT = 120
-    const BOTTOM_GAP = 8
-
-    const bottomEl = document.getElementById("container-2b862c55cfa5526f39d41eec496a7dc2") as HTMLDivElement | null
-
-    const applyLayout = () => {
-      if (bottomEl) bottomEl.style.display = "block"
-      // Reserve space so ads don't overlap content (bottom banner)
-      const spacer = document.getElementById("ad-bottom-spacer") as HTMLDivElement | null
-      if (spacer) {
-        spacer.style.height = `${BOTTOM_HEIGHT + BOTTOM_GAP}px`
-      } else {
-        document.body.style.paddingBottom = `${BOTTOM_HEIGHT + BOTTOM_GAP}px`
-      }
+    // If the script is already on the page, do nothing.
+    if (document.getElementById(scriptId)) {
+      return;
     }
 
-    applyLayout()
-    window.addEventListener("resize", applyLayout)
+    // Create the script element.
+    const script = document.createElement("script");
+    script.id = scriptId;
+    script.async = true;
+    script.src = "//pl27699682.revenuecpmgate.com/2b862c55cfa5526f39d41eec496a7dc2/invoke.js";
 
-    return () => {
-      window.removeEventListener("resize", applyLayout)
-    }
-  }, [])
+    // Add the script to the <head> of the document to start loading it.
+    document.head.appendChild(script);
 
+  }, []); // The empty array [] ensures this effect runs only once.
+
+  // This is the container where Adsterra will place the ad content.
+  // The ad script will find this div by its 'id'.
   return (
-    <>
-      <div
-        id="container-2b862c55cfa5526f39d41eec496a7dc2"
-        style={{ position: "fixed", left: 0, right: 0, bottom: 0, margin: "0 auto", width: 728, maxWidth: "100vw", zIndex: 40 }}
-      />
-    </>
-  )
+    <div
+      id="container-2b862c55cfa5526f39d41eec496a7dc2"
+      style={{
+        // --- Styling for the ad container ---
+        position: "fixed",
+        zIndex: 999, // High z-index to appear on top of other content
+        bottom: 0,
+        left: "50%",
+        transform: "translateX(-50%)", // Centers the ad horizontally
+        width: "728px",      // Standard banner width
+        maxWidth: "100%",    // Ensures it's responsive on mobile
+        height: "90px",      // Standard banner height
+      }}
+    />
+  );
 }
-
-
