@@ -33,6 +33,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable} antialiased`}>
       <body>
         {children}
+        <div id="ad-bottom-spacer" />
         <Ads />
       </body>
     </html>
