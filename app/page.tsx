@@ -57,6 +57,75 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* SEO Section */}
+      <section className="bg-white/70 backdrop-blur-sm">
+        <div className="max-w-5xl mx-auto py-16 px-4 space-y-8">
+          <h2 className="text-3xl font-extrabold text-gray-900">QR Code Tracking & Analytics That Drive Results</h2>
+          <p className="text-gray-700">
+            Our platform makes it easy to generate QR codes and measure performance with detailed analytics. Track total scans,
+            countries and cities, device type (mobile, tablet, desktop), top browsers, operating systems, and the exact time of
+            each scan. Use these insights to optimize campaigns, improve conversions, and understand your audience.
+          </p>
+          <h3 className="text-2xl font-bold text-gray-900">Why Choose Our QR Analytics?</h3>
+          <ul className="list-disc pl-6 text-gray-700 space-y-2">
+            <li>Instant QR code creation with shareable tracking links</li>
+            <li>Real-time dashboards for scans, countries, device type, browser and OS</li>
+            <li>Secure, privacy-conscious infrastructure powered by modern web technology</li>
+            <li>Team-ready: collaborate and monitor performance across campaigns</li>
+          </ul>
+          <h3 className="text-2xl font-bold text-gray-900">Common Use Cases</h3>
+          <ul className="list-disc pl-6 text-gray-700 space-y-2">
+            <li>Marketing campaigns and flyers</li>
+            <li>Product packaging and retail</li>
+            <li>Event tickets and check-ins</li>
+            <li>Restaurant menus and contactless experiences</li>
+          </ul>
+          <h3 className="text-2xl font-bold text-gray-900">FAQs</h3>
+          <div className="space-y-4 text-gray-700">
+            <div>
+              <p className="font-semibold">How do I track QR code scans?</p>
+              <p>Generate a QR code in the dashboard. Share the tracking link. Every scan records device, browser, OS, location and time.</p>
+            </div>
+            <div>
+              <p className="font-semibold">Can I see where scans come from?</p>
+              <p>Yes, we show countries and cities so you can localize your campaigns.</p>
+            </div>
+            <div>
+              <p className="font-semibold">Do you support mobile vs desktop URLs?</p>
+              <p>Yes, add a secondary URL to send mobile users to a different destination.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              {
+                '@type': 'Question',
+                name: 'How do I track QR code scans?',
+                acceptedAnswer: { '@type': 'Answer', text: 'Generate a QR code in the dashboard. Share the tracking link. Every scan records device, browser, OS, location and time.' }
+              },
+              {
+                '@type': 'Question',
+                name: 'Can I see where scans come from?',
+                acceptedAnswer: { '@type': 'Answer', text: 'Yes, we show countries and cities so you can localize your campaigns.' }
+              },
+              {
+                '@type': 'Question',
+                name: 'Do you support mobile vs desktop URLs?',
+                acceptedAnswer: { '@type': 'Answer', text: 'Yes, add a secondary URL to send mobile users to a different destination.' }
+              }
+            ]
+          })
+        }}
+      />
+
       {/* Footer */}
       <footer className="w-full text-center py-6 text-gray-400 text-sm">
         &copy; {new Date().getFullYear()} QR Analytics. All rights reserved.
