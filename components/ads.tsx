@@ -18,7 +18,7 @@ export default function Ads() {
     script.src = "//pl27699682.revenuecpmgate.com/2b862c55cfa5526f39d41eec496a7dc2/invoke.js"
     document.body.appendChild(script)
 
-    const BOTTOM_HEIGHT = 90
+    const BOTTOM_HEIGHT = 120
     const BOTTOM_GAP = 8
 
     const bottomEl = document.getElementById("container-2b862c55cfa5526f39d41eec496a7dc2") as HTMLDivElement | null
@@ -26,7 +26,12 @@ export default function Ads() {
     const applyLayout = () => {
       if (bottomEl) bottomEl.style.display = "block"
       // Reserve space so ads don't overlap content (bottom banner)
-      document.body.style.paddingBottom = `${BOTTOM_HEIGHT + BOTTOM_GAP}px`
+      const spacer = document.getElementById("ad-bottom-spacer") as HTMLDivElement | null
+      if (spacer) {
+        spacer.style.height = `${BOTTOM_HEIGHT + BOTTOM_GAP}px`
+      } else {
+        document.body.style.paddingBottom = `${BOTTOM_HEIGHT + BOTTOM_GAP}px`
+      }
     }
 
     applyLayout()
