@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { redirect, notFound } from "next/navigation"
+import { headers } from "next/headers"
 import AnalyticsCharts from "@/components/analytics-charts"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ExternalLink } from "lucide-react"
@@ -12,6 +13,9 @@ interface AnalyticsPageProps {
 export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
   const { qrCodeId } = await params
   const supabase = await createClient()
+  const hdrs = await headers()
+  const host = hdrs.get("host") || "localhost:3000"
+  const protocol = process.env.NODE_ENV === "development" ? "http" : "https"
 
   const {
     data: { user },
@@ -51,6 +55,9 @@ export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
     totalScans: scans?.length || 0,
   }
 
+  const origin = `${protocol}://${host}`
+  const trackingUrl = `${origin}/scan/${analyticsData.qrCode.hash}`
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -80,7 +87,7 @@ export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
                 <ExternalLink className="h-4 w-4" />
               </a>
               <a
-                href={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(analyticsData.qrCode.url)}&size=200x200`}
+                href={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(trackingUrl)}&size=200x200`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-2 text-blue-500 hover:text-blue-700 border px-2 py-1 rounded"
