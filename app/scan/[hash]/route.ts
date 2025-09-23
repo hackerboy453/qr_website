@@ -60,6 +60,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       ip_address: clientIP,
       user_agent: userAgent,
       referer: request.headers.get("referer") || null,
+      accept_language: request.headers.get("accept-language") || null,
       country,
       city,
       device_type: deviceType,
@@ -67,11 +68,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       os: osName,
     }
 
-    // Insert scan data (no auth required)
-    await supabase.from("scans").insert(scanData)
+    // Fire-and-forget analytics insert to avoid delaying the redirect
+    void supabase.from("scans").insert(scanData)
 
-    // Redirect to chosen target URL
-    return NextResponse.redirect(targetUrl)
+    // Optionally increment a counter via RPC if available; ignore failures
+    void supabase.rpc("increment_scan_count", { target_id: qrCode.id })
+
+    // Redirect to chosen target URL immediately
+    return NextResponse.redirect(targetUrl, { status: 302 })
   } catch (error) {
     return NextResponse.json(
       {

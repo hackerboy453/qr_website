@@ -33,6 +33,9 @@ export default async function DashboardPage() {
           </div>
           <div className="flex items-center gap-4">
             <LogoutButton />
+            <Link href="/theme">
+              <Button variant="outline">Theme Center</Button>
+            </Link>
             <Link href="/dashboard/create">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />

@@ -58,6 +58,21 @@ export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
   const origin = `${protocol}://${host}`
   const trackingUrl = `${origin}/scan/${analyticsData.qrCode.hash}`
 
+<<<<<<< HEAD
+=======
+  // Verify if stored QR image URL is actually reachable to avoid dead links
+  const storedImageUrl: string | undefined = qrCode.data?.image_url
+  let imageIsReachable = false
+  if (storedImageUrl) {
+    try {
+      const resp = await fetch(storedImageUrl, { method: "HEAD", cache: "no-store" })
+      imageIsReachable = resp.ok
+    } catch {
+      imageIsReachable = false
+    }
+  }
+
+>>>>>>> 82b3fa0 (your message)
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -86,6 +101,7 @@ export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
               >
                 <ExternalLink className="h-4 w-4" />
               </a>
+<<<<<<< HEAD
               <a
                 href={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(trackingUrl)}&size=200x200`}
                 target="_blank"
@@ -94,6 +110,25 @@ export default async function AnalyticsPage({ params }: AnalyticsPageProps) {
               >
                 View QR Code
               </a>
+=======
+              {imageIsReachable ? (
+                <a
+                  href={qrCode.data.image_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-2 text-blue-500 hover:text-blue-700 border px-2 py-1 rounded"
+                >
+                  View QR Code
+                </a>
+              ) : (
+                <Link
+                  href={`/preview?data=${encodeURIComponent(trackingUrl)}&bg=${encodeURIComponent(qrCode.background_color || '#ffffff')}&fg=${encodeURIComponent(qrCode.color || '#000000')}&pattern=${encodeURIComponent(qrCode.data?.patternStyle || 'square')}&eye=${encodeURIComponent(qrCode.data?.eyeStyle || 'square')}&eyeColor=${encodeURIComponent(qrCode.data?.eyeColor || qrCode.color || '#000000')}`}
+                  className="ml-2 text-blue-500 hover:text-blue-700 border px-2 py-1 rounded"
+                >
+                  View QR Code
+                </Link>
+              )}
+>>>>>>> 82b3fa0 (your message)
             </div>
             <div className="mt-2">
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">

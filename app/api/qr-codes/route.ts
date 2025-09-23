@@ -2,12 +2,21 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { createHash } from "crypto"
 
+function generateShortCode(length = 7): string {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+  let code = ""
+  for (let i = 0; i < length; i++) {
+    code += alphabet[Math.floor(Math.random() * alphabet.length)]
+  }
+  return code
+}
+
 export async function POST(request: NextRequest) {
   try {
     console.log("[v0] POST /api/qr-codes - Starting QR code creation")
 
-    const { name, url } = await request.json()
-    console.log("[v0] Request data:", { name, url })
+    const { name, url, type = "STATIC", color, background_color } = await request.json()
+    console.log("[v0] Request data:", { name, url, type, color, background_color })
 
     if (!name || !url) {
       console.log("[v0] Missing required fields")
@@ -42,7 +51,22 @@ export async function POST(request: NextRequest) {
     const hash = createHash("sha256").update(`${user.id}-${url}-${Date.now()}`).digest("hex").substring(0, 12)
     console.log("[v0] Generated hash:", hash)
 
-    // Insert QR code with hash
+    // Prepare dynamic short code if requested
+    let shortCode: string | null = null
+    if (String(type).toUpperCase() === "DYNAMIC") {
+      // Try a few times to avoid rare collisions
+      for (let i = 0; i < 3; i++) {
+        const candidate = generateShortCode(7)
+        const { data: existing } = await supabase.from("qr_codes").select("id").eq("short_code", candidate).maybeSingle()
+        if (!existing) {
+          shortCode = candidate
+          break
+        }
+      }
+      if (!shortCode) shortCode = generateShortCode(8)
+    }
+
+    // Insert QR code with hash (and short_code/type when provided)
     const { data: qrCode, error } = await supabase
       .from("qr_codes")
       .insert({
@@ -50,6 +74,10 @@ export async function POST(request: NextRequest) {
         url,
         hash,
         user_id: user.id,
+        type: String(type).toUpperCase(),
+        short_code: shortCode,
+        color: color || null,
+        background_color: background_color || null,
       })
       .select()
       .single()
