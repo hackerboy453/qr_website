@@ -32,14 +32,11 @@ export default function QRGeneratorForm() {
   const [eyeStyle, setEyeStyle] = useState<"square" | "circle">("square")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>("")
-<<<<<<< HEAD
-=======
 
   const [qrData, setQrData] = useState<string>("")
   const qrContainerRef = useRef<HTMLDivElement | null>(null)
   // Use the imported type for the QRCodeStyling instance state
   const [qrInstance, setQrInstance] = useState<QRCodeStyling | null>(null)
->>>>>>> 82b3fa0 (your message)
 
   const router = useRouter()
 
@@ -50,60 +47,6 @@ export default function QRGeneratorForm() {
     setQrInstance(null) // Clear previous instance
 
     try {
-<<<<<<< HEAD
-      console.log("[v0] Starting QR code generation:", { name, url })
-
-      const response = await fetch("/api/qr-codes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // Added credentials for authentication
-        body: JSON.stringify({ name, url }),
-      })
-
-      console.log("[v0] API response status:", response.status)
-      console.log("[v0] API response headers:", Object.fromEntries(response.headers.entries()))
-
-      if (!response.ok) {
-        const contentType = response.headers.get("content-type")
-        console.log("[v0] Response content type:", contentType)
-
-        let errorMessage = "Failed to create QR code"
-
-        if (contentType && contentType.includes("application/json")) {
-          try {
-            const errorData = await response.json()
-            console.log("[v0] Error data:", errorData)
-            errorMessage = errorData.error || errorMessage
-          } catch (jsonError) {
-            console.error("[v0] Failed to parse error JSON:", jsonError)
-            const errorText = await response.text()
-            console.log("[v0] Error text:", errorText)
-            errorMessage = `Server error (${response.status}): ${errorText.substring(0, 100)}...`
-          }
-        } else {
-          const errorText = await response.text()
-          console.log("[v0] Error text:", errorText)
-          errorMessage = `Server error (${response.status}): ${errorText.substring(0, 100)}...`
-        }
-
-        throw new Error(errorMessage)
-      }
-
-      const qrCode = await response.json()
-      console.log("[v0] QR code created:", qrCode)
-
-      // Create tracking URL using hash
-      const trackingUrl = `${window.location.origin}/scan/${qrCode.hash}`
-      console.log("[v0] Tracking URL:", trackingUrl)
-
-      // Generate QR code
-      const generatedQrUrl = generateQRCodeUrl(trackingUrl, qrOptions)
-      console.log("[v0] Generated QR URL:", generatedQrUrl)
-      setQrCodeUrl(generatedQrUrl)
-      // Reset form
-=======
       if (contentType === "TEXT") {
         const generatedQrUrl = generateQRCodeUrl(url, qrOptions)
         setQrCodeUrl(generatedQrUrl)
@@ -195,7 +138,6 @@ export default function QRGeneratorForm() {
       }
 
       // Reset form fields after successful generation
->>>>>>> 82b3fa0 (your message)
       setName("")
       setUrl("")
     } catch (err) {
@@ -320,35 +262,6 @@ export default function QRGeneratorForm() {
               />
             </div>
 
-<<<<<<< HEAD
-            <div className="grid gap-2">
-              <Label htmlFor="qrOptions">QR Code Options</Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="size">Size</Label>
-                  <Input
-                    id="size"
-                    type="number"
-                    value={qrOptions.size}
-                    onChange={(e) => setQrOptions({...qrOptions, size: parseInt(e.target.value) || 200})}
-                    min="100"
-                    max="1000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="format">Format</Label>
-                  <Select value={qrOptions.format} onValueChange={v => setQrOptions({...qrOptions, format: v as "png" | "svg"})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="png">PNG</SelectItem>
-                      <SelectItem value="svg">SVG</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-=======
             <h3 className="text-lg font-medium pt-4 border-t">Customization</h3>
 
             <div className="grid grid-cols-2 gap-4">
@@ -428,7 +341,6 @@ export default function QRGeneratorForm() {
                   </SelectContent>
                 </Select>
               </div>
->>>>>>> 82b3fa0 (your message)
             </div>
 
             {error && (
@@ -451,39 +363,11 @@ export default function QRGeneratorForm() {
       {qrData && (
         <Card>
           <CardHeader>
-<<<<<<< HEAD
-            <CardTitle>Generated QR Code</CardTitle>
-          </CardHeader>
-          <CardContent className="text-center space-y-4">
-            <img src={qrCodeUrl || "/placeholder.svg"} alt="Generated QR Code" className="mx-auto border rounded-lg bg-white" />
-            <div className="flex gap-2 justify-center">
-              <Button onClick={() => {
-                const link = document.createElement("a")
-                link.href = qrCodeUrl
-                link.download = `${name || "qr-code"}.${qrOptions.format}`
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-              }} variant="outline">
-=======
             <CardTitle>Your QR Code</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <div ref={qrContainerRef} className="mx-auto inline-block bg-white p-2 rounded-lg border" />
             <div className="flex gap-2 justify-center">
               <Button onClick={handleDownload} disabled={!qrInstance}>
+>
 >>>>>>> 82b3fa0 (your message)
-                Download
-              </Button>
-              {contentType === "URL" && (
-                <Button onClick={() => router.push("/dashboard")} variant="outline">
-                  View in Dashboard
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  )
-}
