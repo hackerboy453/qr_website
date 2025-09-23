@@ -38,6 +38,22 @@ export default function HomePage() {
         </div>
       </main>
 
+      {/* How to Use QR Analytics Section */}
+      <section className="max-w-5xl mx-auto py-16 px-4 text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900 mb-8">How to use QR Analytics</h2>
+        <div className="aspect-video w-full max-w-2xl mx-auto">
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/nytGUnKZX14"
+            title="Hero (slowed)"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="max-w-5xl mx-auto py-16 px-4 grid md:grid-cols-3 gap-8">
         <div className="bg-white rounded-xl shadow-md p-8 flex flex-col items-center">
