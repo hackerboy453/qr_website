@@ -24,8 +24,6 @@ export default function QRGeneratorForm() {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>("")
-  const [codeType, setCodeType] = useState<"qr" | "barcode">("qr")
-  const [barcodeType, setBarcodeType] = useState("code128")
 
   const router = useRouter()
 
@@ -35,65 +33,57 @@ export default function QRGeneratorForm() {
     setError("")
 
     try {
-      if (codeType === "qr") {
-        console.log("[v0] Starting QR code generation:", { name, url })
+      console.log("[v0] Starting QR code generation:", { name, url })
 
-        const response = await fetch("/api/qr-codes", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Added credentials for authentication
-          body: JSON.stringify({ name, url }),
-        })
+      const response = await fetch("/api/qr-codes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Added credentials for authentication
+        body: JSON.stringify({ name, url }),
+      })
 
-        console.log("[v0] API response status:", response.status)
-        console.log("[v0] API response headers:", Object.fromEntries(response.headers.entries()))
+      console.log("[v0] API response status:", response.status)
+      console.log("[v0] API response headers:", Object.fromEntries(response.headers.entries()))
 
-        if (!response.ok) {
-          const contentType = response.headers.get("content-type")
-          console.log("[v0] Response content type:", contentType)
+      if (!response.ok) {
+        const contentType = response.headers.get("content-type")
+        console.log("[v0] Response content type:", contentType)
 
-          let errorMessage = "Failed to create QR code"
+        let errorMessage = "Failed to create QR code"
 
-          if (contentType && contentType.includes("application/json")) {
-            try {
-              const errorData = await response.json()
-              console.log("[v0] Error data:", errorData)
-              errorMessage = errorData.error || errorMessage
-            } catch (jsonError) {
-              console.error("[v0] Failed to parse error JSON:", jsonError)
-              const errorText = await response.text()
-              console.log("[v0] Error text:", errorText)
-              errorMessage = `Server error (${response.status}): ${errorText.substring(0, 100)}...`
-            }
-          } else {
+        if (contentType && contentType.includes("application/json")) {
+          try {
+            const errorData = await response.json()
+            console.log("[v0] Error data:", errorData)
+            errorMessage = errorData.error || errorMessage
+          } catch (jsonError) {
+            console.error("[v0] Failed to parse error JSON:", jsonError)
             const errorText = await response.text()
             console.log("[v0] Error text:", errorText)
             errorMessage = `Server error (${response.status}): ${errorText.substring(0, 100)}...`
           }
-
-          throw new Error(errorMessage)
+        } else {
+          const errorText = await response.text()
+          console.log("[v0] Error text:", errorText)
+          errorMessage = `Server error (${response.status}): ${errorText.substring(0, 100)}...`
         }
 
-        const qrCode = await response.json()
-        console.log("[v0] QR code created:", qrCode)
-
-        // Create tracking URL using hash
-        const trackingUrl = `${window.location.origin}/scan/${qrCode.hash}`
-        console.log("[v0] Tracking URL:", trackingUrl)
-
-        // Generate QR code
-        const generatedQrUrl = generateQRCodeUrl(trackingUrl, qrOptions)
-        console.log("[v0] Generated QR URL:", generatedQrUrl)
-        setQrCodeUrl(generatedQrUrl)
-      } else {
-        // Barcode logic
-        // Use barcodeapi.org for demo (supports code128, ean13, etc)
-        // For barcode, just use the url field as the value
-        const barcodeUrl = `https://barcodeapi.org/api/${barcodeType}/${encodeURIComponent(url)}`
-        setQrCodeUrl(barcodeUrl)
+        throw new Error(errorMessage)
       }
+
+      const qrCode = await response.json()
+      console.log("[v0] QR code created:", qrCode)
+
+      // Create tracking URL using hash
+      const trackingUrl = `${window.location.origin}/scan/${qrCode.hash}`
+      console.log("[v0] Tracking URL:", trackingUrl)
+
+      // Generate QR code
+      const generatedQrUrl = generateQRCodeUrl(trackingUrl, qrOptions)
+      console.log("[v0] Generated QR URL:", generatedQrUrl)
+      setQrCodeUrl(generatedQrUrl)
       // Reset form
       setName("")
       setUrl("")
@@ -144,35 +134,33 @@ export default function QRGeneratorForm() {
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="codeType">Code Type</Label>
-              <Select value={codeType} onValueChange={v => setCodeType(v as "qr" | "barcode")}> 
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="qr">2D QR Code</SelectItem>
-                  <SelectItem value="barcode">1D Barcode</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {codeType === "barcode" && (
-              <div className="grid gap-2">
-                <Label htmlFor="barcodeType">Barcode Type</Label>
-                <Select value={barcodeType} onValueChange={v => setBarcodeType(v)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="code128">Code128</SelectItem>
-                    <SelectItem value="ean13">EAN-13</SelectItem>
-                    <SelectItem value="ean8">EAN-8</SelectItem>
-                    <SelectItem value="upc">UPC</SelectItem>
-                    <SelectItem value="itf">ITF</SelectItem>
-                    <SelectItem value="codabar">Codabar</SelectItem>
-                  </SelectContent>
-                </Select>
+              <Label htmlFor="qrOptions">QR Code Options</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="size">Size</Label>
+                  <Input
+                    id="size"
+                    type="number"
+                    value={qrOptions.size}
+                    onChange={(e) => setQrOptions({...qrOptions, size: parseInt(e.target.value) || 200})}
+                    min="100"
+                    max="1000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="format">Format</Label>
+                  <Select value={qrOptions.format} onValueChange={v => setQrOptions({...qrOptions, format: v as "png" | "svg"})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="png">PNG</SelectItem>
+                      <SelectItem value="svg">SVG</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            )}
+            </div>
 
             {error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md">
@@ -199,15 +187,15 @@ export default function QRGeneratorForm() {
       {qrCodeUrl && (
         <Card>
           <CardHeader>
-            <CardTitle>Generated {codeType === "qr" ? "QR Code" : "Barcode"}</CardTitle>
+            <CardTitle>Generated QR Code</CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-4">
-            <img src={qrCodeUrl || "/placeholder.svg"} alt="Generated Code" className="mx-auto border rounded-lg bg-white" />
+            <img src={qrCodeUrl || "/placeholder.svg"} alt="Generated QR Code" className="mx-auto border rounded-lg bg-white" />
             <div className="flex gap-2 justify-center">
               <Button onClick={() => {
                 const link = document.createElement("a")
                 link.href = qrCodeUrl
-                link.download = `${name || (codeType === "qr" ? "qr-code" : "barcode")}.${codeType === "qr" ? qrOptions.format : "png"}`
+                link.download = `${name || "qr-code"}.${qrOptions.format}`
                 document.body.appendChild(link)
                 link.click()
                 document.body.removeChild(link)
