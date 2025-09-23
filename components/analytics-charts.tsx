@@ -305,6 +305,9 @@ export default function AnalyticsCharts({ data }: { data: AnalyticsData }) {
                     <p className="text-xs text-gray-500">
                       {scan.device_type} • {scan.browser} • {scan.os}
                     </p>
+                    {scan.ip_address && (
+                      <p className="text-xs text-gray-500">IP: {scan.ip_address}</p>
+                    )}
                     {scan.timezone && <p className="text-xs text-gray-400">{scan.timezone}</p>}
                   </div>
                   <div className="text-xs text-gray-500 text-right">
@@ -321,6 +324,9 @@ export default function AnalyticsCharts({ data }: { data: AnalyticsData }) {
                     <p className="text-xs text-gray-500">
                       {scan.device_type} • {scan.browser} • {scan.os}
                     </p>
+                    {scan.ip_address && (
+                      <p className="text-xs text-gray-500">IP: {scan.ip_address}</p>
+                    )}
                     {scan.timezone && <p className="text-xs text-gray-400">{scan.timezone}</p>}
                   </div>
                   <div className="text-xs text-gray-500 text-right">
