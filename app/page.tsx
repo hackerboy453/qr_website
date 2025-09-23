@@ -1,8 +1,14 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { BarChart3 } from "lucide-react"
+import { createClient } from "@/lib/supabase/server"
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex flex-col">
       {/* Header */}
@@ -11,12 +17,20 @@ export default function HomePage() {
           <span className="text-3xl font-bold text-indigo-700 tracking-tight">QR Analytics</span>
         </div>
         <div className="flex gap-4">
-          <Link href="/auth/login">
-            <Button variant="ghost" className="text-indigo-700 font-semibold">Login</Button>
-          </Link>
-          <Link href="/auth/sign-up">
-            <Button className="bg-indigo-700 text-white font-semibold hover:bg-indigo-800">Sign Up</Button>
-          </Link>
+          {user ? (
+            <Link href="/dashboard">
+              <Button className="bg-indigo-700 text-white font-semibold hover:bg-indigo-800">Dashboard</Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/auth/login">
+                <Button variant="ghost" className="text-indigo-700 font-semibold">Login</Button>
+              </Link>
+              <Link href="/auth/sign-up">
+                <Button className="bg-indigo-700 text-white font-semibold hover:bg-indigo-800">Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
       </header>
 
@@ -29,12 +43,20 @@ export default function HomePage() {
           Instantly create, share, and track QR codes with real-time analytics. Gain insights into your audience and optimize your campaigns with ease.
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center">
-          <Link href="/auth/sign-up">
-            <Button size="lg" className="bg-indigo-700 text-white font-semibold hover:bg-indigo-800 text-lg px-8 py-4">Get Started Free</Button>
-          </Link>
-          <Link href="/auth/login">
-            <Button size="lg" variant="outline" className="text-indigo-700 border-indigo-700 text-lg px-8 py-4">Login</Button>
-          </Link>
+          {user ? (
+            <Link href="/dashboard">
+              <Button size="lg" className="bg-indigo-700 text-white font-semibold hover:bg-indigo-800 text-lg px-8 py-4">Go to Dashboard</Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/auth/sign-up">
+                <Button size="lg" className="bg-indigo-700 text-white font-semibold hover:bg-indigo-800 text-lg px-8 py-4">Get Started Free</Button>
+              </Link>
+              <Link href="/auth/login">
+                <Button size="lg" variant="outline" className="text-indigo-700 border-indigo-700 text-lg px-8 py-4">Login</Button>
+              </Link>
+            </>
+          )}
         </div>
       </main>
 
